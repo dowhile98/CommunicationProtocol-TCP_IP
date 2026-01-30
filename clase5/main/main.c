@@ -24,11 +24,20 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "wifi_manager.h"
-
+#include "http/http_client.h"
+#include "http/http_server.h"
+#include "http/http_client_misc.h"
+#include "http/http_common.h"
+#include "http/mime.h"
+#include "debug.h"
+#include "esp_log.h"
 /* ========================================================================== */
 /*                               CONSTANTES                                   */
 /* ========================================================================== */
-
+// Application configuration
+#define APP_HTTP_SERVER_NAME "192.168.10.5"
+#define APP_HTTP_SERVER_PORT 80
+#define APP_HTTP_URI "/anything"
 /** GPIO del LED integrado */
 #define LED_GPIO 2
 
@@ -48,6 +57,7 @@ static OsTaskId wifi_task_handle = NULL;
 /** Handle de la tarea LED */
 static OsTaskId led_task_handle = NULL;
 
+HttpClientContext httpClientContext;
 /* ========================================================================== */
 /*                      PROTOTIPOS DE FUNCIONES                               */
 /* ========================================================================== */
@@ -56,6 +66,176 @@ static void led_task(void *params);
 static void init_gpio(void);
 static void init_nvs(void);
 
+error_t httpClientTest(void)
+{
+    error_t error;
+    size_t length;
+    uint_t status;
+    const char_t *value;
+    IpAddr ipAddr;
+    char_t buffer[128];
+
+    // Initialize HTTP client context
+    httpClientInit(&httpClientContext);
+
+    // Start of exception handling block
+    do
+    {
+        // Debug message
+        TRACE_INFO("\r\n\r\nResolving server name...\r\n");
+
+        // Resolve HTTP server name
+        error = getHostByName(NULL, APP_HTTP_SERVER_NAME, &ipAddr, 0);
+        // Any error to report?
+        if (error)
+        {
+            // Debug message
+            TRACE_INFO("Failed to resolve server name!\r\n");
+            break;
+        }
+
+        // Select HTTP protocol version
+        error = httpClientSetVersion(&httpClientContext, HTTP_VERSION_1_1);
+        // Any error to report?
+        if (error)
+            break;
+
+        // Set timeout value for blocking operations
+        error = httpClientSetTimeout(&httpClientContext, 20000);
+        // Any error to report?
+        if (error)
+            break;
+
+        // Debug message
+        TRACE_INFO("Connecting to HTTP server %s...\r\n",
+                   ipAddrToString(&ipAddr, NULL));
+
+        // Connect to the HTTP server
+        error = httpClientConnect(&httpClientContext, &ipAddr,
+                                  APP_HTTP_SERVER_PORT);
+        // Any error to report?
+        if (error)
+        {
+            // Debug message
+            TRACE_INFO("Failed to connect to HTTP server!\r\n");
+            break;
+        }
+
+        // Create an HTTP request
+        httpClientCreateRequest(&httpClientContext);
+        httpClientSetMethod(&httpClientContext, "POST");
+        httpClientSetUri(&httpClientContext, APP_HTTP_URI);
+
+        // Set query string
+        httpClientAddQueryParam(&httpClientContext, "param1", "value1");
+        httpClientAddQueryParam(&httpClientContext, "param2", "value2");
+
+        // Add HTTP header fields
+        httpClientAddHeaderField(&httpClientContext, "Host", APP_HTTP_SERVER_NAME);
+        httpClientAddHeaderField(&httpClientContext, "User-Agent", "Mozilla/5.0");
+        httpClientAddHeaderField(&httpClientContext, "Content-Type", "text/plain");
+        httpClientAddHeaderField(&httpClientContext, "Transfer-Encoding", "chunked");
+
+        // Send HTTP request header
+        error = httpClientWriteHeader(&httpClientContext);
+        // Any error to report?
+        if (error)
+        {
+            // Debug message
+            TRACE_INFO("Failed to write HTTP request header!\r\n");
+            break;
+        }
+
+        // Send HTTP request body
+        error = httpClientWriteBody(&httpClientContext, "Hello World!", 12,
+                                    NULL, 0);
+        // Any error to report?
+        if (error)
+        {
+            // Debug message
+            TRACE_INFO("Failed to write HTTP request body!\r\n");
+            break;
+        }
+
+        // Receive HTTP response header
+        error = httpClientReadHeader(&httpClientContext);
+        // Any error to report?
+        if (error)
+        {
+            // Debug message
+            TRACE_INFO("Failed to read HTTP response header!\r\n");
+            break;
+        }
+
+        // Retrieve HTTP status code
+        status = httpClientGetStatus(&httpClientContext);
+        // Debug message
+        TRACE_INFO("HTTP status code: %u\r\n", status);
+
+        // Retrieve the value of the Content-Type header field
+        value = httpClientGetHeaderField(&httpClientContext, "Content-Type");
+
+        // Header field found?
+        if (value != NULL)
+        {
+            // Debug message
+            TRACE_INFO("Content-Type header field value: %s\r\n", value);
+        }
+        else
+        {
+            // Debug message
+            TRACE_INFO("Content-Type header field not found!\r\n");
+        }
+
+        // Receive HTTP response body
+        while (!error)
+        {
+            // Read data
+            error = httpClientReadBody(&httpClientContext, buffer,
+                                       sizeof(buffer) - 1, &length, 0);
+
+            // Check status code
+            if (!error)
+            {
+                // Properly terminate the string with a NULL character
+                buffer[length] = '\0';
+                // Dump HTTP response body
+                TRACE_INFO("%s", buffer);
+            }
+        }
+
+        // Terminate the HTTP response body with a CRLF
+        TRACE_INFO("\r\n");
+
+        // Any error to report?
+        if (error != ERROR_END_OF_STREAM)
+            break;
+
+        // Close HTTP response body
+        error = httpClientCloseBody(&httpClientContext);
+        // Any error to report?
+        if (error)
+        {
+            // Debug message
+            TRACE_INFO("Failed to read HTTP response trailer!\r\n");
+            break;
+        }
+
+        // Gracefully disconnect from the HTTP server
+        httpClientDisconnect(&httpClientContext);
+
+        // Debug message
+        TRACE_INFO("Connection closed\r\n");
+
+        // End of exception handling block
+    } while (0);
+
+    // Release HTTP client context
+    httpClientDeinit(&httpClientContext);
+
+    // Return status code
+    return error;
+}
 /* ========================================================================== */
 /*                      IMPLEMENTACIÓN DE FUNCIONES                           */
 /* ========================================================================== */
@@ -136,6 +316,8 @@ static void led_task(void *params)
             if (wifi_manager_dhcp_obtenido())
             {
                 osDelayTask(LED_BLINK_DELAY_MS);
+
+                httpClientTest();
             }
             else
             {
@@ -175,7 +357,18 @@ void app_main(void)
 
     /* Inicializar GPIO */
     init_gpio();
+    
+    DirEntry file;
+    if (resSearchFile("/text.txt", &file) == NO_ERROR)
+    {   
+        const uint8_t *text;
+        size_t size;
+        resGetData("/text.txt", &text, &size);
 
+
+        ESP_LOGI("TEST", "data: %s", (char *)text);
+    }
+    
     /* Inicializar gestor WiFi */
     ESP_LOGI(TAG, "→ Inicializando gestor WiFi...");
     error = wifi_manager_init();
@@ -238,6 +431,8 @@ void app_main(void)
 
     /* Bucle principal: monitoreo y estadísticas */
     uint32_t contador = 0;
+
+    // Protolo de red
 
     while (1)
     {

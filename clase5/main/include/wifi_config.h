@@ -81,12 +81,12 @@
 
 /** SSID del router al que se conectará el ESP32 en modo STA */
 #ifndef WIFI_STA_SSID
-#define WIFI_STA_SSID "Quino B."
+#define WIFI_STA_SSID "RQUINOB"
 #endif
 
 /** Contraseña del router (modo STA) */
 #ifndef WIFI_STA_PASSWORD
-#define WIFI_STA_PASSWORD "987654321"
+#define WIFI_STA_PASSWORD "R#29qbCivil"
 #endif
 
 /* ========================================================================== */
