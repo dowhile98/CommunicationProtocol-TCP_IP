@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .led-display {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            background-color: #ddd;
+            transition: background-color 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .led-display.on {
+            background-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.8), inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: white;
+        }
+
+        #btnOn {
+            background-color: #ff6b6b;
+        }
+
+        #btnOn:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        #btnOn:active {
+            transform: translateY(0);
+        }
+
+        #btnOff {
+            background-color: #4ecdc4;
+        }
+
+        #btnOff:hover {
+            background-color: #45b8b0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        #btnOff:active {
+            transform: translateY(0);
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: white;
+        }
+
+        .status-message.success {
+            background-color: #51cf66;
+        }
+
+        .status-message.error {
+            background-color: #ff6b6b;
+        }
+
+        .status-message.loading {
+            background-color: #ffa500;
+        }
+
+        .status-message.hidden {
+            display: none;
+        }
+
+        .info {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔦 LED Control</h1>
+        
+        <div class="led-display" id="ledDisplay"></div>
+        
+        <div class="button-group">
+            <button id="btnOn">Encender</button>
+            <button id="btnOff">Apagar</button>
+        </div>
+        
+        <div class="status-message hidden" id="statusMessage"></div>
+        
+        <div class="info">
+            <p>Estado actual: <strong id="ledStatus">Apagado</strong></p>
+        </div>
+    </div>
+
+    <script>
+        const ledDisplay = document.getElementById('ledDisplay');
+        const btnOn = document.getElementById('btnOn');
+        const btnOff = document.getElementById('btnOff');
+        const statusMessage = document.getElementById('statusMessage');
+        const ledStatus = document.getElementById('ledStatus');
+
+        let isLedOn = false;
+
+        /**
+         * Envía una solicitud a la API para controlar el LED
+         * @param {string} state - Estado del LED ('on' o 'off')
+         */
+        async function controlLED(state) {
+            try {
+                showStatus('Procesando...', 'loading');
+                
+                const response = await fetch('/api/control/led', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        state: state,
+                        message: `LED ${state === 'on' ? 'encendido' : 'apagado'} correctamente`
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                isLedOn = state === 'on';
+                updateLEDDisplay();
+                showStatus(data.message, 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Error al controlar el LED', 'error');
+            }
+        }
+
+        /**
+         * Actualiza la visualización del LED
+         */
+        function updateLEDDisplay() {
+            if (isLedOn) {
+                ledDisplay.classList.add('on');
+                ledStatus.textContent = 'Encendido';
+            } else {
+                ledDisplay.classList.remove('on');
+                ledStatus.textContent = 'Apagado';
+            }
+        }
+
+        /**
+         * Muestra un mensaje de estado
+         * @param {string} message - Mensaje a mostrar
+         * @param {string} type - Tipo de mensaje ('success', 'error', 'loading')
+         */
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type}`;
+            
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    statusMessage.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        // Event Listeners
+        btnOn.addEventListener('click', () => controlLED('on'));
+        btnOff.addEventListener('click', () => controlLED('off'));
+
+        // Inicialización
+        updateLEDDisplay();
+    </script>
+</body>
+</html>
