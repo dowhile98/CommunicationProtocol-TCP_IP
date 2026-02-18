@@ -1,4 +1,7 @@
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP32_DEV_KIT_C -D__error_t_defined")
+# Flags para C y C++
+set(common_flags "-DESP32_DEV_KIT_C -D__error_t_defined")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${common_flags}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${common_flags}")
 
 set(COMPONENT_SRCDIRS "."
 	"common"

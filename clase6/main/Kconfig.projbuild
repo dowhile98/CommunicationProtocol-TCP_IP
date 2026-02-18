@@ -1,0 +1,713 @@
+menu "CycloneTCP Configuration"
+
+    menu "Trace Levels"
+        
+        choice MEM_TRACE_LEVEL
+            prompt "Memory trace level"
+            default MEM_TRACE_LEVEL_INFO
+            
+            config MEM_TRACE_LEVEL_INFO
+                bool "INFO"
+            config MEM_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice NIC_TRACE_LEVEL
+            prompt "Network Interface trace level"
+            default NIC_TRACE_LEVEL_INFO
+            
+            config NIC_TRACE_LEVEL_INFO
+                bool "INFO"
+            config NIC_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice ETH_TRACE_LEVEL
+            prompt "Ethernet trace level"
+            default ETH_TRACE_LEVEL_OFF
+            
+            config ETH_TRACE_LEVEL_INFO
+                bool "INFO"
+            config ETH_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice LLDP_TRACE_LEVEL
+            prompt "LLDP trace level"
+            default LLDP_TRACE_LEVEL_OFF
+            
+            config LLDP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config LLDP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice ARP_TRACE_LEVEL
+            prompt "ARP trace level"
+            default ARP_TRACE_LEVEL_OFF
+            
+            config ARP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config ARP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice IP_TRACE_LEVEL
+            prompt "IP trace level"
+            default IP_TRACE_LEVEL_OFF
+            
+            config IP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config IP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice IPV4_TRACE_LEVEL
+            prompt "IPv4 trace level"
+            default IPV4_TRACE_LEVEL_OFF
+            
+            config IPV4_TRACE_LEVEL_INFO
+                bool "INFO"
+            config IPV4_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice IPV6_TRACE_LEVEL
+            prompt "IPv6 trace level"
+            default IPV6_TRACE_LEVEL_OFF
+            
+            config IPV6_TRACE_LEVEL_INFO
+                bool "INFO"
+            config IPV6_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice ICMP_TRACE_LEVEL
+            prompt "ICMP trace level"
+            default ICMP_TRACE_LEVEL_OFF
+            
+            config ICMP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config ICMP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice IGMP_TRACE_LEVEL
+            prompt "IGMP trace level"
+            default IGMP_TRACE_LEVEL_OFF
+            
+            config IGMP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config IGMP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice NAT_TRACE_LEVEL
+            prompt "NAT trace level"
+            default NAT_TRACE_LEVEL_OFF
+            
+            config NAT_TRACE_LEVEL_INFO
+                bool "INFO"
+            config NAT_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice ICMPV6_TRACE_LEVEL
+            prompt "ICMPv6 trace level"
+            default ICMPV6_TRACE_LEVEL_OFF
+            
+            config ICMPV6_TRACE_LEVEL_INFO
+                bool "INFO"
+            config ICMPV6_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice MLD_TRACE_LEVEL
+            prompt "MLD trace level"
+            default MLD_TRACE_LEVEL_OFF
+            
+            config MLD_TRACE_LEVEL_INFO
+                bool "INFO"
+            config MLD_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice NDP_TRACE_LEVEL
+            prompt "NDP trace level"
+            default NDP_TRACE_LEVEL_OFF
+            
+            config NDP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config NDP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice UDP_TRACE_LEVEL
+            prompt "UDP trace level"
+            default UDP_TRACE_LEVEL_OFF
+            
+            config UDP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config UDP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice TCP_TRACE_LEVEL
+            prompt "TCP trace level"
+            default TCP_TRACE_LEVEL_OFF
+            
+            config TCP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config TCP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice SOCKET_TRACE_LEVEL
+            prompt "Socket trace level"
+            default SOCKET_TRACE_LEVEL_OFF
+            
+            config SOCKET_TRACE_LEVEL_INFO
+                bool "INFO"
+            config SOCKET_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice RAW_SOCKET_TRACE_LEVEL
+            prompt "Raw Socket trace level"
+            default RAW_SOCKET_TRACE_LEVEL_OFF
+            
+            config RAW_SOCKET_TRACE_LEVEL_INFO
+                bool "INFO"
+            config RAW_SOCKET_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice BSD_SOCKET_TRACE_LEVEL
+            prompt "BSD Socket trace level"
+            default BSD_SOCKET_TRACE_LEVEL_OFF
+            
+            config BSD_SOCKET_TRACE_LEVEL_INFO
+                bool "INFO"
+            config BSD_SOCKET_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice WEB_SOCKET_TRACE_LEVEL
+            prompt "Web Socket trace level"
+            default WEB_SOCKET_TRACE_LEVEL_OFF
+            
+            config WEB_SOCKET_TRACE_LEVEL_INFO
+                bool "INFO"
+            config WEB_SOCKET_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice AUTO_IP_TRACE_LEVEL
+            prompt "Auto IP trace level"
+            default AUTO_IP_TRACE_LEVEL_INFO
+            
+            config AUTO_IP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config AUTO_IP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice SLAAC_TRACE_LEVEL
+            prompt "SLAAC trace level"
+            default SLAAC_TRACE_LEVEL_INFO
+            
+            config SLAAC_TRACE_LEVEL_INFO
+                bool "INFO"
+            config SLAAC_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice DHCP_TRACE_LEVEL
+            prompt "DHCP trace level"
+            default DHCP_TRACE_LEVEL_INFO
+            
+            config DHCP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config DHCP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice DHCPV6_TRACE_LEVEL
+            prompt "DHCPv6 trace level"
+            default DHCPV6_TRACE_LEVEL_INFO
+            
+            config DHCPV6_TRACE_LEVEL_INFO
+                bool "INFO"
+            config DHCPV6_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice DNS_TRACE_LEVEL
+            prompt "DNS trace level"
+            default DNS_TRACE_LEVEL_INFO
+            
+            config DNS_TRACE_LEVEL_INFO
+                bool "INFO"
+            config DNS_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice MDNS_TRACE_LEVEL
+            prompt "mDNS trace level"
+            default MDNS_TRACE_LEVEL_OFF
+            
+            config MDNS_TRACE_LEVEL_INFO
+                bool "INFO"
+            config MDNS_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice NBNS_TRACE_LEVEL
+            prompt "NBNS trace level"
+            default NBNS_TRACE_LEVEL_OFF
+            
+            config NBNS_TRACE_LEVEL_INFO
+                bool "INFO"
+            config NBNS_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice LLMNR_TRACE_LEVEL
+            prompt "LLMNR trace level"
+            default LLMNR_TRACE_LEVEL_OFF
+            
+            config LLMNR_TRACE_LEVEL_INFO
+                bool "INFO"
+            config LLMNR_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice ECHO_TRACE_LEVEL
+            prompt "Echo trace level"
+            default ECHO_TRACE_LEVEL_INFO
+            
+            config ECHO_TRACE_LEVEL_INFO
+                bool "INFO"
+            config ECHO_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice COAP_TRACE_LEVEL
+            prompt "CoAP trace level"
+            default COAP_TRACE_LEVEL_INFO
+            
+            config COAP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config COAP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice FTP_TRACE_LEVEL
+            prompt "FTP trace level"
+            default FTP_TRACE_LEVEL_INFO
+            
+            config FTP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config FTP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice HTTP_TRACE_LEVEL
+            prompt "HTTP trace level"
+            default HTTP_TRACE_LEVEL_INFO
+            
+            config HTTP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config HTTP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice MQTT_TRACE_LEVEL
+            prompt "MQTT trace level"
+            default MQTT_TRACE_LEVEL_INFO
+            
+            config MQTT_TRACE_LEVEL_INFO
+                bool "INFO"
+            config MQTT_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice MQTT_SN_TRACE_LEVEL
+            prompt "MQTT-SN trace level"
+            default MQTT_SN_TRACE_LEVEL_INFO
+            
+            config MQTT_SN_TRACE_LEVEL_INFO
+                bool "INFO"
+            config MQTT_SN_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice SMTP_TRACE_LEVEL
+            prompt "SMTP trace level"
+            default SMTP_TRACE_LEVEL_INFO
+            
+            config SMTP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config SMTP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice SNMP_TRACE_LEVEL
+            prompt "SNMP trace level"
+            default SNMP_TRACE_LEVEL_INFO
+            
+            config SNMP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config SNMP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice SNTP_TRACE_LEVEL
+            prompt "SNTP trace level"
+            default SNTP_TRACE_LEVEL_INFO
+            
+            config SNTP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config SNTP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice NTP_TRACE_LEVEL
+            prompt "NTP trace level"
+            default NTP_TRACE_LEVEL_INFO
+            
+            config NTP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config NTP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice NTS_TRACE_LEVEL
+            prompt "NTS trace level"
+            default NTS_TRACE_LEVEL_INFO
+            
+            config NTS_TRACE_LEVEL_INFO
+                bool "INFO"
+            config NTS_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice TFTP_TRACE_LEVEL
+            prompt "TFTP trace level"
+            default TFTP_TRACE_LEVEL_INFO
+            
+            config TFTP_TRACE_LEVEL_INFO
+                bool "INFO"
+            config TFTP_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+        choice MODBUS_TRACE_LEVEL
+            prompt "Modbus trace level"
+            default MODBUS_TRACE_LEVEL_INFO
+            
+            config MODBUS_TRACE_LEVEL_INFO
+                bool "INFO"
+            config MODBUS_TRACE_LEVEL_OFF
+                bool "OFF"
+        endchoice
+
+    endmenu
+
+    menu "Network Configuration"
+        
+        config NET_INTERFACE_COUNT
+            int "Number of network adapters"
+            default 2
+            range 1 10
+            help
+                Number of network interfaces to support
+
+        config MAC_ADDR_FILTER_SIZE
+            int "MAC address filter size"
+            default 12
+            range 1 64
+            help
+                Size of the MAC address filter
+
+    endmenu
+
+    menu "IPv4 Configuration"
+        
+        config IPV4_SUPPORT
+            bool "IPv4 support"
+            default y
+            help
+                Enable IPv4 support
+
+        config IPV4_MULTICAST_FILTER_SIZE
+            int "IPv4 multicast filter size"
+            default 4
+            range 1 64
+            depends on IPV4_SUPPORT
+            help
+                Size of the IPv4 multicast filter
+
+        config IPV4_FRAG_SUPPORT
+            bool "IPv4 fragmentation support"
+            default y
+            depends on IPV4_SUPPORT
+            help
+                Enable IPv4 fragmentation support
+
+        config IPV4_MAX_FRAG_DATAGRAMS
+            int "Maximum fragmented datagrams"
+            default 4
+            range 1 16
+            depends on IPV4_FRAG_SUPPORT
+            help
+                Maximum number of fragmented packets to hold in reassembly queue
+
+        config IPV4_MAX_FRAG_DATAGRAM_SIZE
+            int "Maximum fragmented datagram size (bytes)"
+            default 8192
+            range 1024 65536
+            depends on IPV4_FRAG_SUPPORT
+            help
+                Maximum datagram size to accept when reassembling fragments
+
+        config ARP_CACHE_SIZE
+            int "ARP cache size"
+            default 8
+            range 1 32
+            depends on IPV4_SUPPORT
+            help
+                Size of ARP cache
+
+        config ARP_MAX_PENDING_PACKETS
+            int "ARP maximum pending packets"
+            default 2
+            range 1 16
+            depends on IPV4_SUPPORT
+            help
+                Maximum number of packets waiting for address resolution
+
+        config IGMP_HOST_SUPPORT
+            bool "IGMP host support"
+            default y
+            depends on IPV4_SUPPORT
+            help
+                Enable IGMP host support
+
+        config DHCP_SERVER_SUPPORT
+            bool "DHCP server support"
+            default y
+            depends on IPV4_SUPPORT
+            help
+                Enable DHCP server support
+
+    endmenu
+
+    menu "IPv6 Configuration"
+        
+        config IPV6_SUPPORT
+            bool "IPv6 support"
+            default y
+            help
+                Enable IPv6 support
+
+        config IPV6_MULTICAST_FILTER_SIZE
+            int "IPv6 multicast filter size"
+            default 8
+            range 1 64
+            depends on IPV6_SUPPORT
+            help
+                Size of the IPv6 multicast filter
+
+        config IPV6_FRAG_SUPPORT
+            bool "IPv6 fragmentation support"
+            default y
+            depends on IPV6_SUPPORT
+            help
+                Enable IPv6 fragmentation support
+
+        config IPV6_MAX_FRAG_DATAGRAMS
+            int "Maximum IPv6 fragmented datagrams"
+            default 4
+            range 1 16
+            depends on IPV6_FRAG_SUPPORT
+            help
+                Maximum number of fragmented packets to hold in reassembly queue
+
+        config IPV6_MAX_FRAG_DATAGRAM_SIZE
+            int "Maximum IPv6 fragmented datagram size (bytes)"
+            default 8192
+            range 1024 65536
+            depends on IPV6_FRAG_SUPPORT
+            help
+                Maximum datagram size to accept when reassembling fragments
+
+        config MLD_NODE_SUPPORT
+            bool "MLD node support"
+            default y
+            depends on IPV6_SUPPORT
+            help
+                Enable MLD node support
+
+        config NDP_ROUTER_ADV_SUPPORT
+            bool "RA service (NDP Router Advertisement) support"
+            default y
+            depends on IPV6_SUPPORT
+            help
+                Enable Router Advertisement support
+
+        config NDP_NEIGHBOR_CACHE_SIZE
+            int "Neighbor cache size"
+            default 8
+            range 1 32
+            depends on IPV6_SUPPORT
+            help
+                Size of neighbor cache
+
+        config NDP_DEST_CACHE_SIZE
+            int "Destination cache size"
+            default 8
+            range 1 32
+            depends on IPV6_SUPPORT
+            help
+                Size of destination cache
+
+        config NDP_MAX_PENDING_PACKETS
+            int "NDP maximum pending packets"
+            default 2
+            range 1 16
+            depends on IPV6_SUPPORT
+            help
+                Maximum number of packets waiting for address resolution
+
+    endmenu
+
+    menu "TCP Configuration"
+        
+        config TCP_SUPPORT
+            bool "TCP support"
+            default y
+            help
+                Enable TCP support
+
+        config TCP_DEFAULT_TX_BUFFER_SIZE
+            int "TCP default TX buffer size (bytes)"
+            default 2860
+            range 256 65536
+            depends on TCP_SUPPORT
+            help
+                Default buffer size for transmission (1430*2)
+
+        config TCP_DEFAULT_RX_BUFFER_SIZE
+            int "TCP default RX buffer size (bytes)"
+            default 2860
+            range 256 65536
+            depends on TCP_SUPPORT
+            help
+                Default buffer size for reception (1430*2)
+
+        config TCP_DEFAULT_SYN_QUEUE_SIZE
+            int "TCP default SYN queue size"
+            default 4
+            range 1 32
+            depends on TCP_SUPPORT
+            help
+                Default SYN queue size for listening sockets
+
+        config TCP_MAX_RETRIES
+            int "TCP maximum retransmissions"
+            default 5
+            range 1 10
+            depends on TCP_SUPPORT
+            help
+                Maximum number of retransmissions
+
+        config TCP_SACK_SUPPORT
+            bool "Selective acknowledgment (SACK) support"
+            default n
+            depends on TCP_SUPPORT
+            help
+                Enable TCP SACK support
+
+        config TCP_KEEP_ALIVE_SUPPORT
+            bool "TCP keep-alive support"
+            default n
+            depends on TCP_SUPPORT
+            help
+                Enable TCP keep-alive support
+
+    endmenu
+
+    menu "UDP Configuration"
+        
+        config UDP_SUPPORT
+            bool "UDP support"
+            default y
+            help
+                Enable UDP support
+
+        config UDP_RX_QUEUE_SIZE
+            int "UDP receive queue depth"
+            default 4
+            range 1 32
+            depends on UDP_SUPPORT
+            help
+                Receive queue depth for connectionless sockets
+
+    endmenu
+
+    menu "Socket Configuration"
+        
+        config RAW_SOCKET_SUPPORT
+            bool "Raw socket support"
+            default n
+            help
+                Enable raw socket support
+
+        config RAW_SOCKET_RX_QUEUE_SIZE
+            int "Raw socket receive queue depth"
+            default 4
+            range 1 32
+            depends on RAW_SOCKET_SUPPORT
+            help
+                Receive queue depth for raw sockets
+
+        config BSD_SOCKET_SUPPORT
+            bool "BSD socket support"
+            default n
+            help
+                Enable BSD socket support
+
+        config SOCKET_MAX_COUNT
+            int "Maximum number of simultaneous sockets"
+            default 10
+            range 1 64
+            help
+                Maximum number of sockets that can be opened simultaneously
+
+    endmenu
+
+    menu "Service Support"
+        
+        config LLMNR_RESPONDER_SUPPORT
+            bool "LLMNR responder support"
+            default y
+            help
+                Enable LLMNR responder support
+
+        config HTTP_SERVER_SUPPORT
+            bool "HTTP server support"
+            default y
+            help
+                Enable HTTP server support
+
+        config HTTP_SERVER_SSI_SUPPORT
+            bool "Server Side Includes (SSI) support"
+            default y
+            depends on HTTP_SERVER_SUPPORT
+            help
+                Enable Server Side Includes support
+
+    endmenu
+
+endmenu
