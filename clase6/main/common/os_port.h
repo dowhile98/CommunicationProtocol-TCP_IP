@@ -29,302 +29,292 @@
 #ifndef _OS_PORT_H
 #define _OS_PORT_H
 
-// Dependencies
+//Dependencies
 #include "os_port_config.h"
 #include "compiler_port.h"
 
-// Compilation flags used to enable/disable features
-#define ENABLED 1
+//Compilation flags used to enable/disable features
+#define ENABLED  1
 #define DISABLED 0
 
-#define timeCompare(t1, t2) ((int32_t)((t1) - (t2)))
+#define timeCompare(t1, t2) ((int32_t) ((t1) - (t2)))
 
-// Miscellaneous macros
+//Miscellaneous macros
 #if !defined(__AT32F403A_407_LIBRARY_VERSION) && \
-    !defined(__AT32F435_437_LIBRARY_VERSION)
-#ifndef FALSE
-#define FALSE 0
-#endif
+   !defined(__AT32F435_437_LIBRARY_VERSION)
+  #ifndef FALSE
+     #define FALSE 0
+  #endif
 
-#ifndef TRUE
-#define TRUE 1
-#endif
+  #ifndef TRUE
+     #define TRUE 1
+  #endif
 #endif
 
 #ifndef LSB
-#define LSB(x) ((x) & 0xFF)
+   #define LSB(x) ((x) & 0xFF)
 #endif
 
 #ifndef MSB
-#define MSB(x) (((x) >> 8) & 0xFF)
+   #define MSB(x) (((x) >> 8) & 0xFF)
 #endif
 
 #ifndef MIN
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+   #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 #ifndef MAX
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+   #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
 #ifndef arraysize
-#define arraysize(a) (sizeof(a) / sizeof(a[0]))
+   #define arraysize(a) (sizeof(a) / sizeof(a[0]))
 #endif
 
-// Infinite delay
-#define INFINITE_DELAY ((uint_t) - 1)
-// Maximum delay
+//Infinite delay
+#define INFINITE_DELAY ((uint_t) -1)
+//Maximum delay
 #define MAX_DELAY (INFINITE_DELAY / 2)
 
-// No RTOS?
+//No RTOS?
 #if defined(USE_NO_RTOS)
-#include "os_port_none.h"
-// ChibiOS/RT port?
+   #include "os_port_none.h"
+//ChibiOS/RT port?
 #elif defined(USE_CHIBIOS)
-#include "os_port_chibios.h"
-// CMX-RTX port?
+   #include "os_port_chibios.h"
+//CMX-RTX port?
 #elif defined(USE_CMX_RTX)
-#include "os_port_cmx_rtx.h"
-// CMSIS-RTOS port?
+   #include "os_port_cmx_rtx.h"
+//CMSIS-RTOS port?
 #elif defined(USE_CMSIS_RTOS)
-#include "os_port_cmsis_rtos.h"
-// CMSIS-RTOS2 port?
+   #include "os_port_cmsis_rtos.h"
+//CMSIS-RTOS2 port?
 #elif defined(USE_CMSIS_RTOS2)
-#include "os_port_cmsis_rtos2.h"
-// FreeRTOS port?
+   #include "os_port_cmsis_rtos2.h"
+//FreeRTOS port?
 #elif defined(USE_FREERTOS)
-#include "os_port_freertos.h"
-// SafeRTOS port?
+   #include "os_port_freertos.h"
+//SafeRTOS port?
 #elif defined(USE_SAFERTOS)
-#include "os_port_safertos.h"
-// Eclipse ThreadX port?
+   #include "os_port_safertos.h"
+//Eclipse ThreadX port?
 #elif defined(USE_THREADX)
-#include "os_port_threadx.h"
-// Keil RTX port?
+   #include "os_port_threadx.h"
+//Keil RTX port?
 #elif defined(USE_RTX)
-#include "os_port_rtx.h"
-// Micrium uC/OS-II port?
+   #include "os_port_rtx.h"
+//Micrium uC/OS-II port?
 #elif defined(USE_UCOS2)
-#include "os_port_ucos2.h"
-// Micrium uC/OS-III port?
+   #include "os_port_ucos2.h"
+//Micrium uC/OS-III port?
 #elif defined(USE_UCOS3)
-#include "os_port_ucos3.h"
-// PX5 port?
+   #include "os_port_ucos3.h"
+//PX5 port?
 #elif defined(USE_PX5)
-#include "os_port_px5.h"
-// Segger embOS port?
+   #include "os_port_px5.h"
+//Segger embOS port?
 #elif defined(USE_EMBOS)
-#include "os_port_embos.h"
-// TI SYS/BIOS port?
+   #include "os_port_embos.h"
+//TI SYS/BIOS port?
 #elif defined(USE_SYS_BIOS)
-#include "os_port_sys_bios.h"
-// Zephyr port?
+   #include "os_port_sys_bios.h"
+//Zephyr port?
 #elif defined(USE_ZEPHYR)
-#include "os_port_zephyr.h"
-// Windows port?
+   #include "os_port_zephyr.h"
+//Windows port?
 #elif defined(_WIN32)
-#include "os_port_windows.h"
-// POSIX Threads port?
+   #include "os_port_windows.h"
+//POSIX Threads port?
 #elif defined(__linux__) || defined(__FreeBSD__)
-#include "os_port_posix.h"
-// Custom port?
+   #include "os_port_posix.h"
+//Custom port?
 #elif defined(USE_CUSTOM_OS)
-#include "os_port_custom.h"
+   #include "os_port_custom.h"
 #endif
 
-// Fill block of memory
+//Fill block of memory
 #ifndef osMemset
-#include <string.h>
-#define osMemset(p, value, length) (void)memset(p, value, length)
+   #include <string.h>
+   #define osMemset(p, value, length) (void) memset(p, value, length)
 #endif
 
-// Copy block of memory
+//Copy block of memory
 #ifndef osMemcpy
-#include <string.h>
-#define osMemcpy(dest, src, length) (void)memcpy(dest, src, length)
+   #include <string.h>
+   #define osMemcpy(dest, src, length) (void) memcpy(dest, src, length)
 #endif
 
-// Move block of memory
+//Move block of memory
 #ifndef osMemmove
-#include <string.h>
-#define osMemmove(dest, src, length) (void)memmove(dest, src, length)
+   #include <string.h>
+   #define osMemmove(dest, src, length) (void) memmove(dest, src, length)
 #endif
 
-// Compare two blocks of memory
+//Compare two blocks of memory
 #ifndef osMemcmp
-#include <string.h>
-#define osMemcmp(p1, p2, length) memcmp(p1, p2, length)
+   #include <string.h>
+   #define osMemcmp(p1, p2, length) memcmp(p1, p2, length)
 #endif
 
-// Search for the first occurrence of a given character
+//Search for the first occurrence of a given character
 #ifndef osMemchr
-#include <string.h>
-#define osMemchr(p, c, length) memchr(p, c, length)
+   #include <string.h>
+   #define osMemchr(p, c, length) memchr(p, c, length)
 #endif
 
-// Get string length
+//Get string length
 #ifndef osStrlen
-#include <string.h>
-#define osStrlen(s) strlen(s)
+   #include <string.h>
+   #define osStrlen(s) strlen(s)
 #endif
 
-// Compare strings
+//Compare strings
 #ifndef osStrcmp
-#include <string.h>
-#define osStrcmp(s1, s2) strcmp(s1, s2)
+   #include <string.h>
+   #define osStrcmp(s1, s2) strcmp(s1, s2)
 #endif
 
-// Compare substrings
+//Compare substrings
 #ifndef osStrncmp
-#include <string.h>
-#define osStrncmp(s1, s2, length) strncmp(s1, s2, length)
+   #include <string.h>
+   #define osStrncmp(s1, s2, length) strncmp(s1, s2, length)
 #endif
 
-// Compare strings without case
+//Compare strings without case
 #ifndef osStrcasecmp
-#include <string.h>
-#define osStrcasecmp(s1, s2) strcasecmp(s1, s2)
+   #include <string.h>
+   #define osStrcasecmp(s1, s2) strcasecmp(s1, s2)
 #endif
 
-// Compare substrings without case
+//Compare substrings without case
 #ifndef osStrncasecmp
-#include <string.h>
-#define osStrncasecmp(s1, s2, length) strncasecmp(s1, s2, length)
+   #include <string.h>
+   #define osStrncasecmp(s1, s2, length) strncasecmp(s1, s2, length)
 #endif
 
-// Search for the first occurrence of a given character
+//Search for the first occurrence of a given character
 #ifndef osStrchr
-#include <string.h>
-#define osStrchr(s, c) strchr(s, c)
+   #include <string.h>
+   #define osStrchr(s, c) strchr(s, c)
 #endif
 
-// Search for the first occurrence of a substring
+//Search for the first occurrence of a substring
 #ifndef osStrstr
-#include <string.h>
-#define osStrstr(s1, s2) strstr(s1, s2)
+   #include <string.h>
+   #define osStrstr(s1, s2) strstr(s1, s2)
 #endif
 
-// Copy string
+//Copy string
 #ifndef osStrcpy
-#include <string.h>
-#define osStrcpy(s1, s2) (void)strcpy(s1, s2)
+   #include <string.h>
+   #define osStrcpy(s1, s2) (void) strcpy(s1, s2)
 #endif
 
-// Copy characters from string
+//Copy characters from string
 #ifndef osStrncpy
-#include <string.h>
-#define osStrncpy(s1, s2, length) (void)strncpy(s1, s2, length)
+   #include <string.h>
+   #define osStrncpy(s1, s2, length) (void) strncpy(s1, s2, length)
 #endif
 
-// Concatenate strings
+//Concatenate strings
 #ifndef osStrcat
-#include <string.h>
-#define osStrcat(s1, s2) (void)strcat(s1, s2)
+   #include <string.h>
+   #define osStrcat(s1, s2) (void) strcat(s1, s2)
 #endif
 
-// Extract tokens from string
+//Extract tokens from string
 #ifndef osStrtok_r
-#include <string.h>
-#define osStrtok_r(s, delim, last) strtok_r(s, delim, last)
+   #include <string.h>
+   #define osStrtok_r(s, delim, last) strtok_r(s, delim, last)
 #endif
 
-// Format string
+//Format string
 #ifndef osSprintf
-#include <stdio.h>
-#define osSprintf(dest, ...) sprintf(dest, __VA_ARGS__)
+   #include <stdio.h>
+   #define osSprintf(dest, ...) sprintf(dest, __VA_ARGS__)
 #endif
 
-// Format string
+//Format string
 #ifndef osSnprintf
-#include <stdio.h>
-#define osSnprintf(dest, size, ...) snprintf(dest, size, __VA_ARGS__)
+   #include <stdio.h>
+   #define osSnprintf(dest, size, ...) snprintf(dest, size, __VA_ARGS__)
 #endif
 
-// Format string
+//Format string
 #ifndef osVsnprintf
-#include <stdio.h>
-#define osVsnprintf(dest, size, format, ap) vsnprintf(dest, size, format, ap)
+   #include <stdio.h>
+   #define osVsnprintf(dest, size, format, ap) vsnprintf(dest, size, format, ap)
 #endif
 
-// Convert string to integer
+//Convert string to integer
 #ifndef osAtoi
-#include <stdlib.h>
-#define osAtoi(s) atoi(s)
+   #include <stdlib.h>
+   #define osAtoi(s) atoi(s)
 #endif
 
-// Convert string to unsigned long integer
+//Convert string to unsigned long integer
 #ifndef osStrtoul
-#include <stdlib.h>
-#define osStrtoul(s, endptr, base) strtoul(s, endptr, base)
+   #include <stdlib.h>
+   #define osStrtoul(s, endptr, base) strtoul(s, endptr, base)
 #endif
 
-// Convert string to unsigned long long integer
+//Convert string to unsigned long long integer
 #ifndef osStrtoull
-#include <stdlib.h>
-#define osStrtoull(s, endptr, base) strtoull(s, endptr, base)
+   #include <stdlib.h>
+   #define osStrtoull(s, endptr, base) strtoull(s, endptr, base)
 #endif
 
-// Convert a character to lowercase
+//Convert a character to lowercase
 #ifndef osTolower
-#include <ctype.h>
-#define osTolower(c) tolower((uint8_t)(c))
+   #include <ctype.h>
+   #define osTolower(c) tolower((uint8_t) (c))
 #endif
 
-// Convert a character to uppercase
+//Convert a character to uppercase
 #ifndef osToupper
-#include <ctype.h>
-#define osToupper(c) toupper((uint8_t)(c))
+   #include <ctype.h>
+   #define osToupper(c) toupper((uint8_t) (c))
 #endif
 
-// Check if a character is an uppercase letter
+//Check if a character is an uppercase letter
 #ifndef osIsupper
-#include <ctype.h>
-#define osIsupper(c) isupper((uint8_t)(c))
+   #include <ctype.h>
+   #define osIsupper(c) isupper((uint8_t) (c))
 #endif
 
-// Check if a character is a decimal digit
+//Check if a character is a decimal digit
 #ifndef osIsdigit
-#include <ctype.h>
-#define osIsdigit(c) isdigit((uint8_t)(c))
+   #include <ctype.h>
+   #define osIsdigit(c) isdigit((uint8_t) (c))
 #endif
 
-// Check if a character is a whitespace character
+//Check if a character is a whitespace character
 #ifndef osIsspace
-#include <ctype.h>
-#define osIsspace(c) isspace((uint8_t)(c))
+   #include <ctype.h>
+   #define osIsspace(c) isspace((uint8_t) (c))
 #endif
 
-// Check if a character is a blank character
+//Check if a character is a blank character
 #ifndef osIsblank
-#define osIsblank(c) ((c) == ' ' || (c) == '\t')
+   #define osIsblank(c) ((c) == ' ' || (c) == '\t')
 #endif
 
-#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(ESP_PLATFORM)
+#if !defined(__linux__) && !defined(__FreeBSD__)
 
-// Delay routines
+//Delay routines
 #ifndef usleep
-#define usleep(delay)                  \
-   {                                   \
-      volatile uint32_t n = delay * 4; \
-      while (n > 0)                    \
-         n--;                          \
-   }
+   #define usleep(delay) {volatile uint32_t n = delay * 4; while(n > 0) n--;}
 #endif
 
 #ifndef sleep
-#define sleep(delay)                      \
-   {                                      \
-      volatile uint32_t n = delay * 4000; \
-      while (n > 0)                       \
-         n--;                             \
-   }
+   #define sleep(delay) {volatile uint32_t n = delay * 4000; while(n > 0) n--;}
 #endif
 
 #endif
 
-// Task object (deprecated)
+//Task object (deprecated)
 #define OsTask void
-// Invalid handle value (deprecated)
+//Invalid handle value (deprecated)
 #define OS_INVALID_HANDLE OS_INVALID_TASK_ID
 
 #endif

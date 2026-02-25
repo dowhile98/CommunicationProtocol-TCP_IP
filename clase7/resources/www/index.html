@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Wi-Fi Manager</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 2rem auto;
+            background-color: var(--card);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        header h1 {
+            font-size: 2.25rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            background-color: var(--bg);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+            color: var(--text-light);
+            user-select: none;
+        }
+
+        .tab:hover {
+            background-color: var(--border);
+        }
+
+        .tab.active {
+            background-color: var(--card);
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            color: var(--text);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: var(--text);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 600px) {
+            .row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: #1e40af; /* Darker primary */
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: var(--primary);
+            transform: none;
+        }
+
+        button.secondary {
+            background-color: var(--text-light);
+        }
+
+        button.secondary:hover {
+            background-color: #4b5563; /* Darker secondary */
+        }
+
+        .network-list {
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            max-height: 250px;
+            overflow-y: auto;
+            background-color: var(--bg);
+        }
+
+        .network-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.1s;
+        }
+
+        .network-item:last-child {
+            border-bottom: none;
+        }
+
+        .network-item:hover {
+            background-color: var(--border);
+        }
+
+        .network-item span:first-child {
+            font-weight: 500;
+        }
+
+        .network-item span:last-child {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            display: none;
+            animation: slideUp 0.3s ease;
+            z-index: 1000;
+        }
+
+        #toast.success { background-color: var(--success); }
+        #toast.error { background-color: var(--error); }
+        #toast.loading { background-color: var(--warning); }
+
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, 100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📡 ESP32 Wi-Fi Manager</h1>
+            <p>Configuración avanzada de red</p>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="status">Estado</div>
+            <div class="tab" data-tab="sta">Estación (STA)</div>
+            <div class="tab" data-tab="ap">Punto de Acceso (AP)</div>
+            <div class="tab" data-tab="general">General</div>
+        </div>
+
+        <!-- General Settings Tab -->
+        <div id="general" class="tab-content">
+            <div class="card">
+                <h3>Modo de Operación Wi-Fi</h3>
+                <div class="form-group">
+                    <label for="wifiMode">Seleccionar Modo:</label>
+                    <select id="wifiMode" onchange="updateModeInfo()">
+                        <option value="0">Apagado (OFF)</option>
+                        <option value="1">Estación (STA)</option>
+                        <option value="2">Punto de Acceso (AP)</option>
+                        <option value="3">AP + Estación (APSTA)</option>
+                    </select>
+                </div>
+                <div id="modeInfo" style="margin-top: 1rem; color: var(--text-light);"></div>
+            </div>
+        </div>
+
+        <!-- Status Tab -->
+        <div id="status" class="tab-content active">
+            <div class="card">
+                <h3>Información de Conexión</h3>
+                <div id="connectionInfo" style="margin-top: 1rem; display: grid; gap: 0.5rem; font-size: 0.95rem;">
+                    <p>Cargando información...</p>
+                </div>
+                <button onclick="fetchStatus()" class="secondary">Actualizar Estado</button>
+            </div>
+        </div>
+
+        <!-- STA Tab -->
+        <div id="sta" class="tab-content">
+            <div class="card">
+                <h3>Configuración de Estación (STA)</h3>
+                <button onclick="scanNetworks()" id="scanBtn" class="secondary">Escanear Redes</button>
+                <div id="networkList" class="network-list">
+                    <p style="padding: 1rem; color: var(--text-light);">Haz clic en "Escanear Redes" para buscar...</p>
+                </div>
+                
+                <form id="staForm" style="margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label for="sta_ssid">SSID</label>
+                        <input type="text" id="sta_ssid" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sta_password">Contraseña</label>
+                        <input type="password" id="sta_password">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="sta_dhcp" onchange="toggleStaticIP('sta')"> Usar DHCP
+                        </label>
+                    </div>
+                    <div id="sta_static_ip_fields" style="display: none;">
+                        <div class="form-group"><label for="sta_ip">Dirección IP</label><input type="text" id="sta_ip"></div>
+                        <div class="row">
+                            <div class="form-group"><label for="sta_mask">Máscara de Subred</label><input type="text" id="sta_mask"></div>
+                            <div class="form-group"><label for="sta_gw">Puerta de Enlace</label><input type="text" id="sta_gw"></div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group"><label for="sta_dns1">DNS Primario</label><input type="text" id="sta_dns1"></div>
+                            <div class="form-group"><label for="sta_dns2">DNS Secundario</label><input type="text" id="sta_dns2"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- AP Tab -->
+        <div id="ap" class="tab-content">
+            <div class="card">
+                <h3>Configuración de Punto de Acceso (AP)</h3>
+                <form id="apForm">
+                    <div class="form-group">
+                        <label for="ap_ssid">SSID del AP</label>
+                        <input type="text" id="ap_ssid" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ap_password">Contraseña</label>
+                        <input type="password" id="ap_password">
+                    </div>
+                    <div class="form-group">
+                        <label for="ap_max_connections">Max. Conexiones</label>
+                        <input type="number" id="ap_max_connections" min="1" max="10">
+                    </div>
+                     <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="ap_dhcp_server" onchange="toggleDHCPServer('ap')"> Habilitar Servidor DHCP
+                        </label>
+                    </div>
+                    <div id="ap_dhcp_server_fields" style="display: none;">
+                        <div class="form-group"><label for="ap_ip">IP del AP</label><input type="text" id="ap_ip"></div>
+                        <div class="row">
+                            <div class="form-group"><label for="ap_mask">Máscara de Subred</label><input type="text" id="ap_mask"></div>
+                            <div class="form-group"><label for="ap_gw">Puerta de Enlace</label><input type="text" id="ap_gw"></div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group"><label for="ap_dns1">DNS Primario</label><input type="text" id="ap_dns1"></div>
+                            <div class="form-group"><label for="ap_dns2">DNS Secundario</label><input type="text" id="ap_dns2"></div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group"><label for="ap_dhcp_range_min">Rango DHCP Min</label><input type="text" id="ap_dhcp_range_min"></div>
+                            <div class="form-group"><label for="ap_dhcp_range_max">Rango DHCP Max</label><input type="text" id="ap_dhcp_range_max"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <button id="saveConfigBtn" onclick="saveAllConfig()">Guardar Configuración y Reiniciar WiFi</button>
+    </div>
+
+    <div id="toast" class="hidden"></div>
+
+    <script>
+        const elements = {};
+        ['wifiMode', 'modeInfo', 'connectionInfo', 'scanBtn', 'networkList',
+         'sta_ssid', 'sta_password', 'sta_dhcp', 'sta_static_ip_fields',
+         'sta_ip', 'sta_mask', 'sta_gw', 'sta_dns1', 'sta_dns2',
+         'ap_ssid', 'ap_password', 'ap_max_connections', 'ap_dhcp_server',
+         'ap_dhcp_server_fields', 'ap_ip', 'ap_mask', 'ap_gw', 'ap_dns1', 'ap_dns2',
+         'ap_dhcp_range_min', 'ap_dhcp_range_max', 'saveConfigBtn', 'toast'
+        ].forEach(id => {
+            elements[id] = document.getElementById(id);
+        });
+
+        let currentConfig = {}; // Almacena la configuración actual del ESP32
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            const selectedTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+            if (selectedTab) selectedTab.classList.add('active');
+            
+            const selectedContent = document.getElementById(tabId);
+            if (selectedContent) selectedContent.classList.add('active');
+
+            if (tabId === 'status') fetchStatus();
+            if (tabId === 'general') updateModeInfo();
+            if (tabId === 'sta') fetchConfig(); // Cargar la configuración actual al cambiar a STA
+            if (tabId === 'ap') fetchConfig(); // Cargar la configuración actual al cambiar a AP
+        }
+
+        function showToast(msg, type = 'success') {
+            const t = elements.toast;
+            t.textContent = msg;
+            t.className = `status-message ${type}`;
+            t.style.display = 'block';
+            setTimeout(() => {
+                t.style.display = 'none';
+            }, 3000);
+        }
+
+        function toggleStaticIP(type) {
+            const isDhcp = elements[`${type}_dhcp`].checked;
+            elements[`${type}_static_ip_fields`].style.display = isDhcp ? 'none' : 'block';
+        }
+
+        function toggleDHCPServer(type) {
+            const useDhcpServer = elements[`${type}_dhcp_server`].checked;
+            elements[`${type}_dhcp_server_fields`].style.display = useDhcpServer ? 'block' : 'none';
+        }
+
+        // Cargar configuración inicial
+        async function fetchConfig() {
+            try {
+                const res = await fetch('/api/wifi/config');
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                currentConfig = await res.json();
+                
+                // General Tab
+                elements.wifiMode.value = currentConfig.current_mode;
+                updateModeInfo();
+
+                // STA Tab
+                elements.sta_ssid.value = currentConfig.sta.ssid;
+                elements.sta_password.value = currentConfig.sta.password;
+                elements.sta_dhcp.checked = currentConfig.sta.use_dhcp;
+                elements.sta_ip.value = currentConfig.sta.ip;
+                elements.sta_mask.value = currentConfig.sta.mask;
+                elements.sta_gw.value = currentConfig.sta.gw;
+                elements.sta_dns1.value = currentConfig.sta.dns1;
+                elements.sta_dns2.value = currentConfig.sta.dns2;
+                toggleStaticIP('sta');
+
+                // AP Tab
+                elements.ap_ssid.value = currentConfig.ap.ssid;
+                elements.ap_password.value = currentConfig.ap.password;
+                elements.ap_max_connections.value = currentConfig.ap.max_connections;
+                elements.ap_dhcp_server.checked = currentConfig.ap.use_dhcp_server;
+                elements.ap_ip.value = currentConfig.ap.ip;
+                elements.ap_mask.value = currentConfig.ap.mask;
+                elements.ap_gw.value = currentConfig.ap.gw;
+                elements.ap_dns1.value = currentConfig.ap.dns1;
+                elements.ap_dns2.value = currentConfig.ap.dns2;
+                elements.ap_dhcp_range_min.value = currentConfig.ap.dhcp_range_min;
+                elements.ap_dhcp_range_max.value = currentConfig.ap.dhcp_range_max;
+                toggleDHCPServer('ap');
+
+            } catch (e) {
+                showToast(`Error al cargar configuración: ${e.message}`, 'error');
+            }
+        }
+
+        async function fetchStatus() {
+            try {
+                const res = await fetch('/api/wifi/status');
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const data = await res.json();
+                
+                let modeText = "";
+                switch(data.current_mode) {
+                    case 0: modeText = "Apagado (OFF)"; break;
+                    case 1: modeText = "Estación (STA)"; break;
+                    case 2: modeText = "Punto de Acceso (AP)"; break;
+                    case 3: modeText = "AP + Estación (APSTA)"; break;
+                    default: modeText = "Desconocido"; break;
+                }
+
+                elements.connectionInfo.innerHTML = `
+                    <p><strong>Modo Wi-Fi:</strong> ${modeText}</p>
+                    <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid var(--border);">
+                    <p><strong>Estado STA:</strong> ${data.sta_connected ? '✅ Conectado' : '❌ Desconectado'}</p>
+                    <p><strong>SSID Conectado:</strong> ${data.sta_ssid || 'N/A'}</p>
+                    <p><strong>IP Local STA:</strong> ${data.sta_ip || 'N/A'}</p>
+                    <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid var(--border);">
+                    <p><strong>Clientes en AP:</strong> ${data.ap_clients || 0}</p>
+                    <p><strong>SSID AP:</strong> ${currentConfig.ap ? currentConfig.ap.ssid : 'N/A'}</p>
+                    <p><strong>IP AP:</strong> ${currentConfig.ap ? currentConfig.ap.ip : 'N/A'}</p>
+                `;
+            } catch (e) {
+                showToast(`Error al obtener estado: ${e.message}`, 'error');
+            }
+        }
+
+        async function scanNetworks() {
+            elements.scanBtn.disabled = true;
+            elements.scanBtn.textContent = 'Escaneando...';
+            elements.networkList.innerHTML = `<p style="padding: 1rem; color: var(--text-light);">Buscando redes...</p>`;
+            try {
+                const res = await fetch('/api/wifi/scan');
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const networks = await res.json();
+                
+                if (networks.length === 0) {
+                    elements.networkList.innerHTML = `<p style="padding: 1rem; color: var(--text-light);">No se encontraron redes.</p>`;
+                } else {
+                    elements.networkList.innerHTML = networks.map(n => `
+                        <div class="network-item" onclick="selectNetwork('${n.ssid}')">
+                            <span>${n.ssid}</span>
+                            <span style="color: var(--text-light); font-size: 0.8rem;">${n.rssi} dBm (${n.authmode})</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                showToast(`Error en el escaneo: ${e.message}`, 'error');
+            }
+            elements.scanBtn.disabled = false;
+            elements.scanBtn.textContent = 'Escanear Redes';
+        }
+
+        function selectNetwork(ssid) {
+            elements.sta_ssid.value = ssid;
+            elements.sta_password.focus();
+        }
+
+        function updateModeInfo() {
+            const mode = parseInt(elements.wifiMode.value);
+            let infoText = "";
+            switch (mode) {
+                case 0: infoText = "El Wi-Fi estará completamente apagado."; break;
+                case 1: infoText = "El dispositivo se conectará como Estación (STA) a una red existente."; break;
+                case 2: infoText = "El dispositivo actuará como Punto de Acceso (AP), creando su propia red."; break;
+                case 3: infoText = "El dispositivo funcionará simultáneamente como Estación y Punto de Acceso."; break;
+            }
+            elements.modeInfo.textContent = infoText;
+        }
+
+        async function saveAllConfig() {
+            showToast('Guardando configuración...', 'loading');
+            elements.saveConfigBtn.disabled = true;
+
+            const configToSend = {
+                current_mode: parseInt(elements.wifiMode.value),
+                sta: {
+                    ssid: elements.sta_ssid.value,
+                    password: elements.sta_password.value,
+                    use_dhcp: elements.sta_dhcp.checked,
+                },
+                ap: {
+                    ssid: elements.ap_ssid.value,
+                    password: elements.ap_password.value,
+                    max_connections: parseInt(elements.ap_max_connections.value),
+                    use_dhcp_server: elements.ap_dhcp_server.checked,
+                }
+            };
+
+            if (!elements.sta_dhcp.checked) {
+                configToSend.sta.ip = elements.sta_ip.value;
+                configToSend.sta.mask = elements.sta_mask.value;
+                configToSend.sta.gw = elements.sta_gw.value;
+                configToSend.sta.dns1 = elements.sta_dns1.value;
+                configToSend.sta.dns2 = elements.sta_dns2.value;
+            }
+
+            if (elements.ap_dhcp_server.checked) {
+                configToSend.ap.ip = elements.ap_ip.value;
+                configToSend.ap.mask = elements.ap_mask.value;
+                configToSend.ap.gw = elements.ap_gw.value;
+                configToSend.ap.dns1 = elements.ap_dns1.value;
+                configToSend.ap.dns2 = elements.ap_dns2.value;
+                configToSend.ap.dhcp_range_min = elements.ap_dhcp_range_min.value;
+                configToSend.ap.dhcp_range_max = elements.ap_dhcp_range_max.value;
+            } else {
+                 // Si el servidor DHCP no está activo, las IPs del AP deben ser estáticas y se envían
+                 configToSend.ap.ip = elements.ap_ip.value;
+                 configToSend.ap.mask = elements.ap_mask.value;
+                 configToSend.ap.gw = elements.ap_gw.value;
+                 configToSend.ap.dns1 = elements.ap_dns1.value;
+                 configToSend.ap.dns2 = elements.ap_dns2.value;
+            }
+            
+
+            try {
+                const res = await fetch('/api/wifi/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(configToSend)
+                });
+                if(res.ok) {
+                    showToast('Configuración guardada. Reiniciando WiFi...', 'success');
+                    // Volver a cargar el estado y la configuración después de un reinicio potencial
+                    setTimeout(() => {
+                        fetchStatus();
+                        fetchConfig();
+                    }, 5000); // Dar tiempo al ESP32 para reiniciar
+                } else {
+                    const errorText = await res.text();
+                    showToast(`Error al guardar: ${res.status} - ${errorText}`, 'error');
+                }
+            } catch (e) {
+                showToast(`Error de conexión: ${e.message}`, 'error');
+            }
+            elements.saveConfigBtn.disabled = false;
+        }
+
+        // Inicialización: Cargar configuración y estado
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchConfig();
+            fetchStatus();
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+            // Asegurarse de que los campos de IP estática y DHCP server se muestren/oculten correctamente al cargar
+            toggleStaticIP('sta');
+            toggleDHCPServer('ap');
+        });
+
+        // Activar la pestaña 'general' por defecto en lugar de 'status'
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('general');
+        });
+    </script>
+</body>
+</html>
